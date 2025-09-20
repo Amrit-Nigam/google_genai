@@ -179,10 +179,15 @@ export class CareerService {
   }
 
   private static generateSummary(profile: UserProfile, careerType: string): string {
+    const baseSkills = profile.skills.join(', ');
+    const resumeSkills = profile.resume?.extractedInfo.skills || [];
+    const allSkills = [...new Set([...profile.skills, ...resumeSkills])];
+    const experienceCount = profile.resume?.extractedInfo.experience.length || 0;
+    
     const summaries = {
-      'software-developer': `Based on your interest in ${profile.careerInterest}, a career in software development would be perfect for you. Your skills in ${profile.skills.join(', ')} provide a strong foundation for building modern web applications.`,
-      'data-scientist': `Your interest in ${profile.careerInterest} and skills in ${profile.skills.join(', ')} make you an excellent candidate for data science. This field offers great opportunities to work with data and machine learning.`,
-      'product-manager': `With your interest in ${profile.careerInterest} and skills in ${profile.skills.join(', ')}, product management could be your ideal career path. You'll be able to bridge technical and business worlds.`
+      'software-developer': `Based on your interest in ${profile.careerInterest}, a career in software development would be perfect for you. Your skills in ${allSkills.join(', ')} provide a strong foundation for building modern web applications.${experienceCount > 0 ? ` Your ${experienceCount} years of experience will give you an advantage in the job market.` : ''}`,
+      'data-scientist': `Your interest in ${profile.careerInterest} and skills in ${allSkills.join(', ')} make you an excellent candidate for data science. This field offers great opportunities to work with data and machine learning.${experienceCount > 0 ? ` Your professional experience will be valuable in this analytical field.` : ''}`,
+      'product-manager': `With your interest in ${profile.careerInterest} and skills in ${allSkills.join(', ')}, product management could be your ideal career path. You'll be able to bridge technical and business worlds.${experienceCount > 0 ? ` Your industry experience will help you understand user needs and market dynamics.` : ''}`
     };
     return summaries[careerType as keyof typeof summaries] || summaries['software-developer'];
   }

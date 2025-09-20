@@ -25,6 +25,26 @@ export class GeminiService {
         - Skills: ${profile.skills.join(', ')}
         - Career Interest: ${profile.careerInterest}
         - Location: ${profile.location || 'Not specified'}
+        
+        ${profile.resume ? `
+        Resume Information (Extracted):
+        - Resume Skills: ${profile.resume.extractedInfo.skills.join(', ')}
+        - Work Experience: ${profile.resume.extractedInfo.experience.length} positions
+        - Education: ${profile.resume.extractedInfo.education.length} degrees
+        - Languages: ${profile.resume.extractedInfo.languages?.join(', ') || 'Not specified'}
+        - Certifications: ${profile.resume.extractedInfo.certifications?.join(', ') || 'Not specified'}
+        - Professional Summary: ${profile.resume.extractedInfo.summary || 'Not provided'}
+        
+        Work Experience Details:
+        ${profile.resume.extractedInfo.experience.map(exp => 
+          `- ${exp.position} at ${exp.company} (${exp.duration}): ${exp.description}`
+        ).join('\n')}
+        
+        Education Details:
+        ${profile.resume.extractedInfo.education.map(edu => 
+          `- ${edu.degree} in ${edu.field} from ${edu.institution} (${edu.year})`
+        ).join('\n')}
+        ` : ''}
 
         Please provide a detailed career recommendation in the following JSON format:
         {
@@ -145,6 +165,7 @@ export class GeminiService {
         Create a realistic career path with 5-8 nodes including courses, internships, jobs, companies, and skills.
         Make sure the positions are spread out appropriately for a flowchart (x: 100-1200, y: 100-400).
         The career path should be relevant to the user's interests and skills.
+        ${profile.resume ? 'Use the detailed resume information to create a more personalized and accurate career path that builds on their existing experience and skills.' : ''}
         Provide 3 alternative careers with realistic match scores, salaries, and requirements.
         
         IMPORTANT: All edges must include sourceHandle and targetHandle properties:
@@ -188,6 +209,14 @@ export class GeminiService {
         - Skills: ${profile.skills.join(', ')}
         - Career Interest: ${profile.careerInterest}
         - Location: ${profile.location || 'Not specified'}
+        
+        ${profile.resume ? `
+        Resume Information (Extracted):
+        - Resume Skills: ${profile.resume.extractedInfo.skills.join(', ')}
+        - Work Experience: ${profile.resume.extractedInfo.experience.length} positions
+        - Education: ${profile.resume.extractedInfo.education.length} degrees
+        - Professional Summary: ${profile.resume.extractedInfo.summary || 'Not provided'}
+        ` : ''}
 
         Return only a JSON array of alternative careers in this format:
         [

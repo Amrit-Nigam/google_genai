@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NBCard } from '../components/NBCard';
 import { NBButton } from '../components/NBButton';
@@ -7,12 +7,17 @@ import { SummaryPanel } from '../components/SummaryPanel';
 import { GridBackground } from '../components/ui/grid-background';
 import { DotBackground } from '../components/ui/dot-background';
 import { useUserStore } from '../lib/stores/userStore';
+import { CareerService } from '../lib/services/careerService';
+import { AlternativeCareer } from '../lib/types';
 import { toast } from 'sonner';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Loader2 } from 'lucide-react';
 
 export const Results = () => {
   const navigate = useNavigate();
-  const { profile, results, clearData } = useUserStore();
+  const { profile, results, setResults, clearData } = useUserStore();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedAlternative, setSelectedAlternative] = useState<string | null>(null);
+  const [originalResults, setOriginalResults] = useState(results);
 
   useEffect(() => {
     if (!profile || !results) {
@@ -20,13 +25,53 @@ export const Results = () => {
       return;
     }
     
+    // Store original results when first loaded
+    if (!originalResults) {
+      setOriginalResults(results);
+    }
+    
     // Show success toast
     toast.success('Career path generated! (demo)');
-  }, [profile, results, navigate]);
+  }, [profile, results, navigate, originalResults]);
 
   const handleStartOver = () => {
     clearData();
     navigate('/details');
+  };
+
+  const handleBackToOriginal = () => {
+    if (originalResults) {
+      setResults(originalResults);
+      toast.success('Returned to original career path');
+    }
+  };
+
+  const handleAlternativeCareerClick = async (alternative: AlternativeCareer) => {
+    if (!profile || isGenerating) return;
+
+    setSelectedAlternative(alternative.id);
+    setIsGenerating(true);
+
+    try {
+      // Create a modified profile with the alternative career as the main interest
+      const modifiedProfile = {
+        ...profile,
+        careerInterest: alternative.title,
+        skills: [...profile.skills, ...alternative.requirements]
+      };
+
+      // Generate new career path for the selected alternative
+      const newResults = await CareerService.generatePath(modifiedProfile);
+      setResults(newResults);
+      
+      toast.success(`Generated career path for ${alternative.title}!`);
+    } catch (error) {
+      console.error('Error generating alternative career path:', error);
+      toast.error('Failed to generate career path for this alternative. Please try again.');
+    } finally {
+      setIsGenerating(false);
+      setSelectedAlternative(null);
+    }
   };
 
   if (!profile || !results) {
@@ -51,6 +96,16 @@ export const Results = () => {
               </h1>
             </div>
             <div className="flex space-x-2">
+              {originalResults && results !== originalResults && (
+                <NBButton
+                  variant="secondary"
+                  onClick={handleBackToOriginal}
+                  className="flex items-center space-x-2 border-border/50"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to Original</span>
+                </NBButton>
+              )}
               <NBButton
                 variant="secondary"
                 onClick={handleStartOver}
@@ -149,14 +204,24 @@ export const Results = () => {
           {/* Alternative Career Options */}
           <div className="mt-8">
             <NBCard className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <h3 className="text-2xl font-bold text-foreground mb-6">
-                Alternative Career Options
-              </h3>
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  Alternative Career Options
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Click on any career below to generate a personalized career path for that role
+                </p>
+              </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {results.alternatives.map((alt) => (
                   <div
                     key={alt.id}
-                    className="group bg-gradient-to-r from-card to-card/50 border border-border/50 rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/30 hover:scale-[1.02]"
+                    onClick={() => handleAlternativeCareerClick(alt)}
+                    className={`group bg-gradient-to-r from-card to-card/50 border border-border/50 rounded-xl p-5 shadow-lg transition-all duration-300 cursor-pointer ${
+                      selectedAlternative === alt.id
+                        ? 'border-primary/50 bg-primary/5 scale-[1.02]'
+                        : 'hover:shadow-xl hover:border-primary/30 hover:scale-[1.02]'
+                    } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <div className="flex justify-between items-start mb-3">
                       <h4 className="font-bold text-foreground text-base group-hover:text-primary transition-colors">
@@ -168,9 +233,13 @@ export const Results = () => {
                           <div className="text-xs text-muted-foreground">match</div>
                         </div>
                         <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
-                          <div className="w-6 h-6 bg-primary/30 rounded-full flex items-center justify-center">
-                            <div className="w-3 h-3 bg-primary rounded-full"></div>
-                          </div>
+                          {selectedAlternative === alt.id ? (
+                            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                          ) : (
+                            <div className="w-6 h-6 bg-primary/30 rounded-full flex items-center justify-center">
+                              <div className="w-3 h-3 bg-primary rounded-full"></div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -179,23 +248,38 @@ export const Results = () => {
                       {alt.description}
                     </p>
                     
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <span className="text-primary">💰</span>
-                        <span className="font-medium">{alt.salary}</span>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <span className="text-primary">💰</span>
+                          <span className="font-medium">{alt.salary}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm">
+                          <span className="text-primary">📈</span>
+                          <span className={`font-medium px-2 py-1 rounded-full text-xs ${
+                            alt.growth === 'high' 
+                              ? 'bg-green-500/20 text-green-400' 
+                              : alt.growth === 'medium'
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {alt.growth} growth
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 text-sm">
-                        <span className="text-primary">📈</span>
-                        <span className={`font-medium px-2 py-1 rounded-full text-xs ${
-                          alt.growth === 'high' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : alt.growth === 'medium'
-                            ? 'bg-yellow-500/20 text-yellow-400'
-                            : 'bg-red-500/20 text-red-400'
-                        }`}>
-                          {alt.growth} growth
-                        </span>
-                      </div>
+                      
+                      {selectedAlternative === alt.id ? (
+                        <div className="flex items-center justify-center text-sm text-primary font-medium">
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generating career path...
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <div className="text-xs text-muted-foreground bg-primary/10 px-3 py-1 rounded-full inline-block">
+                            Click to explore this career path
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

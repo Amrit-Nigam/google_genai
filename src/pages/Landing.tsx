@@ -125,8 +125,9 @@ export const Landing = () => {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Get personalized career advice powered by AI. Visualize your career path, 
-            discover new opportunities, and bridge skill gaps with our interactive flowchart.
+            Get personalized career advice powered by AI. Upload your resume for automatic 
+            skill extraction, visualize your career path, discover new opportunities, and 
+            bridge skill gaps with our interactive flowchart.
           </p>
           <div className="flex justify-center">
             <Link to="/details">
@@ -156,7 +157,8 @@ export const Landing = () => {
               </h3>
               <p className="text-muted-foreground leading-relaxed">
                 Get tailored career recommendations based on your skills, interests, 
-                and goals. Our AI analyzes your profile to suggest the best path forward.
+                and goals. Upload your resume for automatic skill extraction and more 
+                personalized AI-powered career advice.
               </p>
             </NBCard>
 
@@ -206,6 +208,7 @@ export const Landing = () => {
               </h3>
               <p className="text-muted-foreground">
                 Tell us about your skills, education, interests, and career goals. 
+                Upload your resume for automatic skill extraction and experience analysis. 
                 The more details you provide, the better our recommendations.
               </p>
             </div>

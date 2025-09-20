@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { NBCard } from '../components/NBCard';
 import { NBButton } from '../components/NBButton';
 import { FormInput } from '../components/FormInput';
+import { ResumeUpload } from '../components/ResumeUpload';
 import { GridBackgroundSmall } from '../components/ui/grid-background';
 import { DotBackground } from '../components/ui/dot-background';
 import { useUserStore } from '../lib/stores/userStore';
 import { CareerService } from '../lib/services/careerService';
-import { EducationLevel } from '../lib/types';
+import { EducationLevel, ResumeData } from '../lib/types';
 import { toast } from 'sonner';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Plus, X, FileText } from 'lucide-react';
 
 const educationLevels: { value: EducationLevel; label: string }[] = [
   { value: 'high-school', label: 'High School' },
@@ -29,7 +30,8 @@ const schema = z.object({
   educationLevel: z.enum(['high-school', 'associates', 'bachelors', 'masters', 'phd', 'other']),
   skills: z.array(z.string()).min(1, 'Please add at least one skill'),
   careerInterest: z.string().min(5, 'Career interest must be at least 5 characters'),
-  location: z.string().optional()
+  location: z.string().optional(),
+  resume: z.any().optional()
 });
 
 export const Details = () => {
@@ -38,6 +40,7 @@ export const Details = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
 
   const {
     register,
@@ -66,10 +69,29 @@ export const Details = () => {
     setValue('skills', newSkills);
   };
 
+  const handleResumeUploaded = (resume: ResumeData) => {
+    setResumeData(resume);
+    setValue('resume', resume);
+    
+    // Auto-populate skills from resume if user hasn't added any yet
+    if (skills.length === 0 && resume.extractedInfo.skills.length > 0) {
+      const resumeSkills = resume.extractedInfo.skills.slice(0, 10); // Limit to first 10 skills
+      setSkills(resumeSkills);
+      setValue('skills', resumeSkills);
+      toast.success(`Added ${resumeSkills.length} skills from your resume!`);
+    }
+  };
+
+  const handleResumeRemoved = () => {
+    setResumeData(null);
+    setValue('resume', undefined);
+  };
+
   const onSubmit = async (data: any) => {
     const profile = {
       ...data,
-      skills: data.skills
+      skills: data.skills,
+      resume: resumeData || undefined
     };
     
     setProfile(profile);
@@ -246,6 +268,28 @@ export const Details = () => {
                 register={register}
                 error={errors.location as any}
               />
+
+              {/* Resume Upload Section */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-foreground">
+                  Resume Upload (Optional)
+                </label>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Upload your resume to automatically extract skills, experience, and education details for more personalized recommendations.
+                </p>
+                <ResumeUpload
+                  onResumeUploaded={handleResumeUploaded}
+                  onResumeRemoved={handleResumeRemoved}
+                  resumeData={resumeData || undefined}
+                  disabled={isLoading}
+                />
+                {resumeData && (
+                  <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-2">
+                    <FileText className="w-3 h-3" />
+                    <span>Resume data will be used to enhance your career recommendations</span>
+                  </div>
+                )}
+              </div>
 
               <div className="flex justify-end space-x-4 pt-6">
                 <NBButton

@@ -6,6 +6,42 @@ export interface UserProfile {
   skills: string[];
   careerInterest: string;
   location?: string;
+  resume?: ResumeData;
+}
+
+// Resume Types
+export interface ResumeData {
+  file: File;
+  extractedText: string;
+  extractedInfo: ExtractedResumeInfo;
+}
+
+export interface ExtractedResumeInfo {
+  name?: string;
+  email?: string;
+  phone?: string;
+  skills: string[];
+  experience: WorkExperience[];
+  education: EducationInfo[];
+  summary?: string;
+  languages?: string[];
+  certifications?: string[];
+}
+
+export interface WorkExperience {
+  company: string;
+  position: string;
+  duration: string;
+  description: string;
+  skills?: string[];
+}
+
+export interface EducationInfo {
+  institution: string;
+  degree: string;
+  field: string;
+  year: string;
+  gpa?: string;
 }
 
 export type EducationLevel = 
