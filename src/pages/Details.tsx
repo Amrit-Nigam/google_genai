@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { NBCard } from '../components/NBCard';
 import { NBButton } from '../components/NBButton';
 import { FormInput } from '../components/FormInput';
-import { GridBackground, GridBackgroundSmall } from '../components/ui/grid-background';
+import { GridBackgroundSmall } from '../components/ui/grid-background';
 import { DotBackground } from '../components/ui/dot-background';
 import { useUserStore } from '../lib/stores/userStore';
 import { CareerService } from '../lib/services/careerService';

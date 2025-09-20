@@ -2,8 +2,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import AppRoutes from '@/router/routes'
 import { CommandMenu } from '@/components/CommandMenu'
 import { Toaster } from '@/components/ui/sonner'
-import { BGPattern } from '@/components/ui/bg-pattern'
-import { GridBackground, GridBackgroundSmall } from '@/components/ui/grid-background'
+import { GridBackground } from '@/components/ui/grid-background'
 import { DotBackground } from '@/components/ui/dot-background'
 
 function App() {

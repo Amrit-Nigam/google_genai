@@ -1,4 +1,4 @@
-import { UserProfile, CareerRecommendation, CareerNode, CareerEdge, AlternativeCareer } from '../types';
+import { UserProfile, CareerRecommendation, AlternativeCareer } from '../types';
 import { GeminiService } from './geminiService';
 
 // Mock data for different career paths
