@@ -1,7 +1,7 @@
 // Environment configuration
 export const config = {
   geminiApiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
-
+  isProduction: import.meta.env.PROD || false,
 };
 
 // Validate required environment variables
