@@ -92,15 +92,15 @@ export const Details = () => {
   };
 
   return (
-    <div className="min-h-screen light-rays-bg">
+    <div className="min-h-screen light-rays-bg relative">
       {/* Header */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm">
+      <header className="border-b border-border/20 bg-card/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => navigate('/')}
-                className="p-2 hover:bg-accent rounded-lg transition-colors"
+                className="p-2 hover:bg-accent/20 rounded-lg transition-colors"
               >
                 <ArrowLeft className="w-5 h-5 text-foreground" />
               </button>
@@ -113,9 +113,9 @@ export const Details = () => {
       </header>
 
       {/* Form Section */}
-      <section className="py-12 px-4">
+      <section className="py-12 px-4 relative">
         <div className="max-w-2xl mx-auto">
-          <NBCard>
+          <NBCard className="border-border/50 bg-card/50 backdrop-blur-sm">
             <h2 className="text-3xl font-bold text-foreground mb-6">
               Tell us about yourself
             </h2>

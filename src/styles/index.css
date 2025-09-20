@@ -5,48 +5,48 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --background: 220 13% 8%;
+    --foreground: 210 40% 98%;
+    --card: 220 13% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 13% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 13% 16%;
+    --muted-foreground: 217 10% 65%;
+    --accent: 142 86% 28%;
+    --accent-foreground: 355 7% 97%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 13% 20%;
+    --input: 215 13% 16%;
+    --ring: 263 70% 50%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --background: 220 13% 8%;
+    --foreground: 210 40% 98%;
+    --card: 220 13% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 13% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 13% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 13% 16%;
+    --muted-foreground: 217 10% 65%;
+    --accent: 142 86% 28%;
+    --accent-foreground: 355 7% 97%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 13% 20%;
+    --input: 215 13% 16%;
+    --ring: 263 70% 50%;
   }
 }
 
@@ -59,11 +59,12 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(215, 13%, 20%);
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(220, 13%, 8%);
+    color: hsl(210, 40%, 98%);
     font-family: 'geist', system-ui, sans-serif;
   }
 
@@ -76,10 +77,12 @@
 /* Light rays background */
 @layer utilities {
   .light-rays-bg {
-    @apply bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900;
+    background: linear-gradient(135deg, hsl(220, 13%, 8%) 0%, hsl(263, 70%, 8%) 50%, hsl(220, 13%, 8%) 100%);
     background-image: 
-      radial-gradient(ellipse at top, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      radial-gradient(ellipse at bottom, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+      radial-gradient(ellipse at top, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(34, 197, 94, 0.06) 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(34, 197, 94, 0.04) 0%, transparent 50%);
   }
 }
 
@@ -93,19 +96,22 @@ html {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #141414;
+  background: hsl(var(--background));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3a3939;
+  background: hsl(var(--border));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: hsl(var(--muted));
 }
 
 .gradient {
-  @apply bg-gradient-to-r from-[#F596D3] to-[#D247BF] text-transparent bg-clip-text
+  background: linear-gradient(to right, #F596D3, #D247BF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 
