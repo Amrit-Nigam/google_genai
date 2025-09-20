@@ -4,7 +4,8 @@ import { NBCard } from '../components/NBCard';
 import { NBButton } from '../components/NBButton';
 import { FlowChart } from '../components/FlowChart';
 import { SummaryPanel } from '../components/SummaryPanel';
-import { BGPattern } from '../components/ui/bg-pattern';
+import { GridBackground } from '../components/ui/grid-background';
+import { DotBackground } from '../components/ui/dot-background';
 import { useUserStore } from '../lib/stores/userStore';
 import { toast } from 'sonner';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
@@ -65,39 +66,53 @@ export const Results = () => {
 
       {/* Main Content */}
       <div className="py-8 px-4 relative">
-        <BGPattern variant="dots" mask="fade-edges" size={36} fill="rgba(139, 92, 246, 0.04)" />
+        <GridBackground 
+          size={40} 
+          lineColor="rgba(139, 92, 246, 0.15)" 
+          opacity={0.2}
+          className="absolute inset-0"
+        >
+          <div />
+        </GridBackground>
+        <DotBackground 
+          size={60} 
+          dotColor="rgba(34, 197, 94, 0.1)" 
+          opacity={0.3}
+          className="absolute inset-0"
+        >
+          <div />
+        </DotBackground>
         <div className="max-w-7xl mx-auto relative">
-          <div className="grid xl:grid-cols-3 gap-8">
-            {/* Summary Panel */}
-            <div className="xl:col-span-1 order-2 xl:order-1">
-              <SummaryPanel 
-                recommendation={results} 
-                userName={profile.name} 
-              />
-            </div>
+          {/* Summary Panel - Full Width */}
+          <div className="mb-8">
+            <SummaryPanel 
+              recommendation={results} 
+              userName={profile.name} 
+            />
+          </div>
 
-            {/* Flow Chart */}
-            <div className="xl:col-span-2 order-1 xl:order-2">
-              <NBCard className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-                <div className="p-6 pb-4">
-                  <h3 className="text-2xl font-bold text-foreground mb-3">
-                    Your Career Journey
-                  </h3>
-                  <p className="text-muted-foreground mb-6 leading-relaxed">
-                    Explore your AI-generated career path. Click and drag to navigate, 
-                    zoom in/out to see details, and discover the connections between 
-                    different opportunities.
-                  </p>
-                </div>
-                <div className="px-6 pb-6">
-                  <FlowChart 
-                    nodes={results.careerPath.nodes}
-                    edges={results.careerPath.edges}
-                    className="w-full"
-                  />
-                </div>
-              </NBCard>
-            </div>
+          {/* Flow Chart - Full Width Below */}
+          <div className="w-full">
+            <NBCard className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
+              <div className="p-6 pb-4">
+                <h3 className="text-2xl font-bold text-foreground mb-3">
+                  Your Career Journey
+                </h3>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  Explore your AI-generated career path. Click and drag to navigate, 
+                  zoom in/out to see details, and discover the connections between 
+                  different opportunities.
+                </p>
+              </div>
+              <div className="px-6 pb-6">
+                <FlowChart 
+                  nodes={results.careerPath.nodes}
+                  edges={results.careerPath.edges}
+                  className="w-full"
+                  height="600px"
+                />
+              </div>
+            </NBCard>
           </div>
 
           {/* Legend */}
@@ -127,6 +142,63 @@ export const Results = () => {
                   <div className="w-5 h-5 bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg shadow-sm group-hover:scale-110 transition-transform"></div>
                   <span className="text-sm font-medium text-foreground">Skills</span>
                 </div>
+              </div>
+            </NBCard>
+          </div>
+
+          {/* Alternative Career Options */}
+          <div className="mt-8">
+            <NBCard className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-foreground mb-6">
+                Alternative Career Options
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {results.alternatives.map((alt) => (
+                  <div
+                    key={alt.id}
+                    className="group bg-gradient-to-r from-card to-card/50 border border-border/50 rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/30 hover:scale-[1.02]"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-bold text-foreground text-base group-hover:text-primary transition-colors">
+                        {alt.title}
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-foreground">{alt.matchScore}%</div>
+                          <div className="text-xs text-muted-foreground">match</div>
+                        </div>
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center">
+                          <div className="w-6 h-6 bg-primary/30 rounded-full flex items-center justify-center">
+                            <div className="w-3 h-3 bg-primary rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                      {alt.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <span className="text-primary">💰</span>
+                        <span className="font-medium">{alt.salary}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm">
+                        <span className="text-primary">📈</span>
+                        <span className={`font-medium px-2 py-1 rounded-full text-xs ${
+                          alt.growth === 'high' 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : alt.growth === 'medium'
+                            ? 'bg-yellow-500/20 text-yellow-400'
+                            : 'bg-red-500/20 text-red-400'
+                        }`}>
+                          {alt.growth} growth
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </NBCard>
           </div>

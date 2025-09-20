@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { NBCard } from '../components/NBCard';
 import { NBButton } from '../components/NBButton';
 import { FormInput } from '../components/FormInput';
+import { GridBackground, GridBackgroundSmall } from '../components/ui/grid-background';
+import { DotBackground } from '../components/ui/dot-background';
 import { useUserStore } from '../lib/stores/userStore';
 import { CareerService } from '../lib/services/careerService';
 import { EducationLevel } from '../lib/types';
@@ -114,7 +116,23 @@ export const Details = () => {
 
       {/* Form Section */}
       <section className="py-12 px-4 relative">
-        <div className="max-w-2xl mx-auto">
+        <GridBackgroundSmall 
+          size={24} 
+          lineColor="rgba(139, 92, 246, 0.1)" 
+          opacity={0.2}
+          className="absolute inset-0"
+        >
+          <div />
+        </GridBackgroundSmall>
+        <DotBackground 
+          size={40} 
+          dotColor="rgba(34, 197, 94, 0.08)" 
+          opacity={0.3}
+          className="absolute inset-0"
+        >
+          <div />
+        </DotBackground>
+        <div className="max-w-2xl mx-auto relative">
           <NBCard className="border-border/50 bg-card/50 backdrop-blur-sm">
             <h2 className="text-3xl font-bold text-foreground mb-6">
               Tell us about yourself
