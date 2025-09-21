@@ -179,7 +179,6 @@ export class CareerService {
   }
 
   private static generateSummary(profile: UserProfile, careerType: string): string {
-    const baseSkills = profile.skills.join(', ');
     const resumeSkills = profile.resume?.extractedInfo.skills || [];
     const allSkills = [...new Set([...profile.skills, ...resumeSkills])];
     const experienceCount = profile.resume?.extractedInfo.experience.length || 0;

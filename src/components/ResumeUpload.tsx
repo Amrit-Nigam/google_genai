@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
-import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, FileText, X, CheckCircle, Loader2 } from 'lucide-react';
 import { ResumeService } from '../lib/services/resumeService';
-import { ResumeData, ExtractedResumeInfo } from '../lib/types';
+import { ResumeData } from '../lib/types';
 import { toast } from 'sonner';
 
 interface ResumeUploadProps {
@@ -17,7 +17,6 @@ export const ResumeUpload = ({
   resumeData, 
   disabled = false 
 }: ResumeUploadProps) => {
-  const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +36,6 @@ export const ResumeUpload = ({
       return;
     }
 
-    setIsUploading(true);
     setIsProcessing(true);
 
     try {
@@ -55,7 +53,6 @@ export const ResumeUpload = ({
       console.error('Error processing resume:', error);
       toast.error('Failed to process resume. Please try again.');
     } finally {
-      setIsUploading(false);
       setIsProcessing(false);
     }
   };
